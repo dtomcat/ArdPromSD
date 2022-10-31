@@ -1,4 +1,5 @@
 /*
+  v1.0
   https://github.com/dtomcat/ArdPromSD
 
   ArduinoPromSD is a derivative of the work by Ryzee119 
@@ -27,23 +28,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#define XBOX_EEPROM_ADDRESS  0x54
+#define XBOX_EEPROM_ADDRESS 0x54
 #define XBOX_EEPROM_SIZE    256
+#define GLED                4
+#define RLED                5
+#define BUTT                6 
 
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
 
-File myFile;  //SD card operations
-int GLED = 4; //OK LED
-int RLED = 5; //Error LED
-int BUTT = 6; //Button
-
 char pbEEPROM[XBOX_EEPROM_SIZE];
-int returnStatus = -1;
-
-
-int buttonState = 0;  // Button status
 
 void setup() {
   pinMode(GLED, OUTPUT);
@@ -69,6 +64,7 @@ void setup() {
     }
   }
   //Check for communication with EEPROM
+  int returnStatus = -1;
   returnStatus = XboxI2C_DetectEEPROM(XBOX_EEPROM_ADDRESS);
   if (returnStatus == -1) {
     setError();
@@ -76,7 +72,7 @@ void setup() {
   }
   //create eeprom.bin and read eeprom from xbox and
   //dump into eeprom.bin
-  myFile = SD.open("epbackup/eeprom.bin", FILE_WRITE);
+  File myFile = SD.open("epbackup/eeprom.bin", FILE_WRITE);
   // if the file opened okay, write to it:
   if (myFile) {
     returnStatus = XboxI2C_ReadEEPROM(XBOX_EEPROM_ADDRESS, pbEEPROM);
@@ -84,16 +80,18 @@ void setup() {
       returnStatus = myFile.write(pbEEPROM, XBOX_EEPROM_SIZE);
       if (!returnStatus) {
         setError();
+        myFile.close();
         while (1);
       }
     }
     else {
       setError();
+      myFile.close();
       while (1);
     }
     // close the file:
     myFile.close();
-    digitalWrite(RLED, LOW);  //Red LED off
+    setOK();
   }
   else {
     setError();
@@ -104,8 +102,8 @@ void setup() {
 }
 
 void loop() {
-  returnStatus = -1;
-  buttonState = digitalRead(BUTT);
+  int returnStatus = -1;
+  int buttonState = digitalRead(BUTT); //Button Status
   
   //Check if eeprom.bin in writeep folder to write to EEPROM
   //If so, let user know it's ready to write (blinking Green LED)
@@ -121,7 +119,7 @@ void loop() {
 
     //Write bin to EEPROM
     memset(pbEEPROM, 0, XBOX_EEPROM_SIZE);
-    myFile = SD.open("epbackup/eeprom.bin", FILE_READ);
+    File myFile = SD.open("epbackup/eeprom.bin", FILE_READ);
     returnStatus = myFile.read(pbEEPROM, XBOX_EEPROM_SIZE);
     //Check if file read
     if (returnStatus) {
@@ -131,12 +129,13 @@ void loop() {
         myFile.close();
         //After successful write... remove file
         SD.remove("writeep/eeprom.bin");
-        digitalWrite(RLED, LOW);
-        digitalWrite(GLED, HIGH);
+        setOK();
         while (1);
       }
     } else {
       setError();
+      myFile.close();
+      while(1);
     }
   } else {
     while (1);
@@ -148,6 +147,10 @@ void setError() {
   digitalWrite(GLED, LOW);  //Green LED off
 }
 
+void setOK() {
+  digitalWrite(RLED, LOW); //Red LED off
+  digitalWrite(GLED, HIGH);  //Green LED on
+}
 
 //***********************************************
 //**** FOLLOWING CODE WRITTEN BY RYZEE119 *******
