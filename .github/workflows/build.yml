@@ -21,4 +21,4 @@ jobs:
           sketch-paths: |
             - ./
           libraries: |
-            - name: Arduino_SD
+            - name: SD
