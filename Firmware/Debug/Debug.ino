@@ -1,5 +1,5 @@
 /*
-  https://github.com/dtomcat/ArduinoPromSD
+  https://github.com/dtomcat/ArdPromSD
 
   ArduinoPromSD is a derivative of the work by Ryzee119 
   (ArduinoProm: https://github.com/dtomcat/ArduinoPromSD)
