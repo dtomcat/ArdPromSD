@@ -1,4 +1,5 @@
 /*
+  v1.0D
   https://github.com/dtomcat/ArdPromSD
 
   ArduinoPromSD is a derivative of the work by Ryzee119 
@@ -27,37 +28,36 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#define XBOX_EEPROM_ADDRESS  0x54
+#define XBOX_EEPROM_ADDRESS 0x54
 #define XBOX_EEPROM_SIZE    256
+#define GLED                4
+#define RLED                5
+#define BUTT                6 
 
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
 
-File myFile;  //SD card operations
-int GLED = 4; //OK LED
-int RLED = 5; //Error LED
-int BUTT = 6; //Button
-
 char pbEEPROM[XBOX_EEPROM_SIZE];
-int returnStatus = -1;
-
-// variables will change:
-int buttonState = 0;  // Button status
 
 void setup() {
   pinMode(GLED, OUTPUT);
   pinMode(RLED, OUTPUT);
   pinMode(BUTT, INPUT);
-  digitalWrite(GLED, HIGH); //Green LED on
-  digitalWrite(RLED, HIGH); //Red LED on
-
+  
   Serial.begin(9600);
   Wire.begin();
   Wire.setWireTimeout(3000000);
-  while (!Serial) {
-  ; // wait for serial port to connect. Needed for native USB port only
+  
+  while (!Serial) {  // wait for serial port to connect. Needed for native USB port only
+    digitalWrite(GLED, !digitalRead(GLED));
+    digitalWrite(RLED, !digitalRead(RLED));
+    delay(500); 
   }
+  
+  digitalWrite(GLED, HIGH); //Green LED on
+  digitalWrite(RLED, HIGH); //Red LED on
+  
   Serial.print("Initializing SD card...");
   //Initialize SD card then check for folder... 
   //if doesn't exist; create it
@@ -85,6 +85,7 @@ void setup() {
   Serial.println("OK");
   Serial.print("Trying to communicate with Xbox EEPROM...");
   //Check for communication with EEPROM
+  int returnStatus = -1;
   returnStatus = XboxI2C_DetectEEPROM(XBOX_EEPROM_ADDRESS);
   if (returnStatus == -1) {
     Serial.println("*********************************************");
@@ -96,7 +97,7 @@ void setup() {
   Serial.println("OK");
   //create eeprom.bin and read eeprom from xbox and
   //dump into eeprom.bin
-  myFile = SD.open("epbackup/eeprom.bin", FILE_WRITE);
+  File myFile = SD.open("epbackup/eeprom.bin", FILE_WRITE);
   // if the file opened okay, write to it:
   if (myFile) {
     Serial.print("Reading EEPROM...");
@@ -110,6 +111,7 @@ void setup() {
         Serial.println("EEPROM is NOT backed up!!!!");
         Serial.println("*********************************************");
         setError();
+        myFile.close();
         while (1);
       }
     }
@@ -118,12 +120,13 @@ void setup() {
       Serial.println("Error reading eeprom!");
       Serial.println("*********************************************");
       setError();
+      myFile.close();
       while (1);
     }
     // close the file:
     myFile.close();
     Serial.println("Done backing up process...");
-    digitalWrite(RLED, LOW);
+    setOK();
   }
   else {
     Serial.println("*********************************************");
@@ -137,8 +140,8 @@ void setup() {
 }
 
 void loop() {
-  returnStatus = -1;
-  buttonState = digitalRead(BUTT);
+  int returnStatus = -1;
+  int buttonState = digitalRead(BUTT); // Button status
   
   //Check if eeprom.bin in writeep folder to write to EEPROM
   //If so, let user know it's ready to write (blinking Green LED)
@@ -155,7 +158,7 @@ void loop() {
 
     //Write bin to EEPROM
     memset(pbEEPROM, 0, XBOX_EEPROM_SIZE);
-    myFile = SD.open("epbackup/eeprom.bin", FILE_READ);
+    File myFile = SD.open("epbackup/eeprom.bin", FILE_READ);
     returnStatus = myFile.read(pbEEPROM, XBOX_EEPROM_SIZE);
     //Check if file read
     if (returnStatus) {
@@ -174,8 +177,7 @@ void loop() {
         Serial.println("......................................");
         Serial.println("EEPROM.bin erased from writeep folder!");
         Serial.println("......................................");
-        digitalWrite(RLED, LOW);
-        digitalWrite(GLED, HIGH);
+        setOK();
         Serial.println("*********************************************");
         Serial.println("Backup and Write processes completed successfully");
         Serial.println("Remove module and plug back in to restart!");
@@ -187,6 +189,8 @@ void loop() {
       Serial.println("Error Reading EEPROM.bin from writeep folder!");
       Serial.println("*********************************************");
       setError();
+      myFile.close();
+      while(1);
     }
   } else {
     Serial.println("*********************************************");
@@ -200,6 +204,11 @@ void loop() {
 void setError() {
   digitalWrite(RLED, HIGH); //Red LED on
   digitalWrite(GLED, LOW);  //Green LED off
+}
+
+void setOK() {
+  digitalWrite(RLED, LOW); //Red LED off
+  digitalWrite(GLED, HIGH);  //Green LED on
 }
 
 
