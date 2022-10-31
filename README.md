@@ -1,5 +1,5 @@
 # ArduinoProm
-![Build](https://github.com/dtomcat/ArdPromSD/workflows/Build/badge.svg)  
+[![Build](https://github.com/dtomcat/ArduinoPromSD/actions/workflows/build.yml/badge.svg)](https://github.com/dtomcat/ArduinoPromSD/actions/workflows/build.yml)
 This project is based on the work from Ryzee119's ArduinoProm:
 
 >ArduinoProm. An Arduino based Original Xbox EEPROM reader and writer.
