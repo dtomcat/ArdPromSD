@@ -14,14 +14,11 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
     
-    - name: Set up Arduino CLI
-      uses: arduino/setup-arduino-cli@v1.0.0
-    
-    - name: Install platform
-      run: |
-        arduino-cli core update-index
-        arduino-cli core install arduino:avr
-      
-    - name: Compile Sketch
-      run: |
-        arduino-cli compile -b arduino:avr:leonardo --warnings "default"
+    - name: Compile sketch
+      uses: arduino/compile-sketches@v1
+      with:
+          fqbn: arduino:avr:leonardo
+          sketch-paths: |
+            - ./
+          libraries: |
+            -
