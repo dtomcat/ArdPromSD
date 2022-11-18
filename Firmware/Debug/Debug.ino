@@ -1,5 +1,5 @@
 /*
-  v1.0D
+  v1.1aD
   https://github.com/dtomcat/ArdPromSD
 
   ArduinoPromSD is a derivative of the work by Ryzee119 
@@ -97,7 +97,15 @@ void setup() {
   Serial.println("OK");
   //create eeprom.bin and read eeprom from xbox and
   //dump into eeprom.bin
-  File myFile = SD.open("epbackup/eeprom.bin", FILE_WRITE);
+  char action;
+  if (SD.exists("epbackup/eeprom.bin"))
+  {  
+    action = O_WRITE | O_TRUNC;
+  }else
+  {
+    action = FILE_WRITE;
+  }
+  File myFile = SD.open("epbackup/eeprom.bin", action);
   // if the file opened okay, write to it:
   if (myFile) {
     Serial.print("Reading EEPROM...");
