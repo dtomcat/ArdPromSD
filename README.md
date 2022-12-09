@@ -1,5 +1,5 @@
 # ArduinoProm
-[![Build](https://github.com/dtomcat/ArdPromSD/actions/workflows/build.yml/badge.svg)](https://github.com/dtomcat/ArdPromSD/actions/workflows/build.yml)
+[![](https://img.shields.io/badge/Create%20one-Kitspace-brightgreen.svg)](https://kitspace.org/boards/github.com/dtomcat/ardpromsd/)                              [![Build](https://github.com/dtomcat/ArdPromSD/actions/workflows/build.yml/badge.svg)](https://github.com/dtomcat/ArdPromSD/actions/workflows/build.yml)
 
 This project is based on the work from Ryzee119's ArduinoProm:
 
