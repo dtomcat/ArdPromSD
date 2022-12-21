@@ -1,5 +1,5 @@
 /*
-  v1.1aD
+  v1.2aD
   https://github.com/dtomcat/ArdPromSD
 
   ArduinoPromSD is a derivative of the work by Ryzee119 
@@ -47,7 +47,7 @@ void setup() {
   
   Serial.begin(9600);
   Wire.begin();
-  Wire.setWireTimeout(3000000);
+  Wire.setWireTimeout(30000000);
   
   while (!Serial) {  // wait for serial port to connect. Needed for native USB port only
     digitalWrite(GLED, !digitalRead(GLED));
