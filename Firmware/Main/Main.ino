@@ -48,7 +48,7 @@ void setup() {
   digitalWrite(RLED, HIGH); //Red LED on
 
   Wire.begin();
-  Wire.setWireTimeout(3000000);
+  Wire.setWireTimeout(30000000);
   //Initialize SD card then check for folder... 
   //if doesn't exist; create it
   if (!SD.begin(10)) {
