@@ -1,5 +1,5 @@
                                                                             /*
-  v1.1a
+  v1.2a
   https://github.com/dtomcat/ArdPromSD
 
   ArduinoPromSD is a derivative of the work by Ryzee119 
