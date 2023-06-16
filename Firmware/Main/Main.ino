@@ -1,5 +1,5 @@
                                                                             /*
-  v1.2a
+  v1.3a
   https://github.com/dtomcat/ArdPromSD
 
   ArduinoPromSD is a derivative of the work by Ryzee119 
@@ -128,7 +128,7 @@ void loop() {
 
     //Write bin to EEPROM
     memset(pbEEPROM, 0, XBOX_EEPROM_SIZE);
-    File myFile = SD.open("epbackup/eeprom.bin", FILE_READ);
+    File myFile = SD.open("writeep/eeprom.bin", FILE_READ);
     returnStatus = myFile.read(pbEEPROM, XBOX_EEPROM_SIZE);
     //Check if file read
     if (returnStatus) {
